@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ad, Category, Condition
+from .models import Ad, Category, Condition, ExchangeProposal
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -55,3 +55,24 @@ class AdSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({'condition': 'Invalid condition name'})
 
         return data
+
+
+class ExchangeSerializer(serializers.ModelSerializer):
+    ad_sender = AdSerializer(read_only=True)
+    ad_receiver = AdSerializer(read_only=True)
+    status_display = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ExchangeProposal
+        fields = [
+            'id',
+            'ad_sender',
+            'ad_receiver',
+            'status',
+            'status_display',
+            'comment'
+        ]
+        read_only_fields = ['id', 'ad_sender', 'ad_receiver']
+
+    def get_status_display(self, obj):
+        return obj.get_status_display()

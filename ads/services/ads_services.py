@@ -52,7 +52,7 @@ class AdsService:
             user_obj = self.User.get(username=username)
             if not self.Ad.filter(id=ad_id, user=user_obj).exists():
                 return {'is_deleted': False,
-                        'message': 'Ad with ID "{ad_id}" does not exist or does not belong to the user'}
+                        'message': f'Ad with ID:{ad_id} does not exist or does not belong to the user'}
 
             self.Ad.filter(id=ad_id, user=user_obj).delete()
 

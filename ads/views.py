@@ -5,7 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 from .services.ads_services import *
-from .serializers import AdSerializer
+from .serializers import AdSerializer, ExchangeSerializer
+from .services.exchange_service import *
 
 
 # Create your views here.
@@ -61,3 +62,37 @@ class AdsView(APIView):
         serialized_data = AdSerializer(result_page, many=True).data
 
         return paginator.get_paginated_response(serialized_data)
+
+
+@permission_classes([IsAuthenticated])
+class CreateExchangeView(APIView):
+    def post(self, request):
+        data = request.data
+
+        create_result = ExchangeService().create_exchange(data)
+        return Response(create_result)
+
+
+@permission_classes([IsAuthenticated])
+class EditExchangeView(APIView):
+    def post(self, request):
+        username = request.user.username
+        data = request.data
+
+        edit_result = ExchangeService().edit_exchange(username, data)
+        return Response(edit_result)
+
+
+@permission_classes([IsAuthenticated])
+class ExchangesView(APIView):
+
+    def post(self, request):
+        data = request.data
+        exchanges_result = ExchangeService().all_exchanges(data)
+
+        if isinstance(exchanges_result, int):
+            return Response({'error': 'Invalid filters'}, status=exchanges_result)
+
+        serialized_data = ExchangeSerializer(exchanges_result, many=True).data
+
+        return Response(serialized_data)
