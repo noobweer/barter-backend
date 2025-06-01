@@ -194,3 +194,80 @@ class EditAdViewTest(APITestCase):
         response = self.client.post(reverse('edit-ad'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['is_edited'], False)
+
+
+class AdsViewTest(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+        self.category_obj = Category.objects.create(name="Техника")
+        self.condition_obj = Condition.objects.create(name="Б/у")
+        self.test_ad_obj1 = Ad.objects.create(user=self.user, title="Телефон", description="Хороший телефон",
+                                              category=self.category_obj, condition=self.condition_obj)
+        self.test_ad_obj2 = Ad.objects.create(user=self.user, title="MP3 плеер", description="Хороший плеер",
+                                              category=self.category_obj, condition=self.condition_obj)
+
+    def test_no_filters(self):
+        data = {
+        }
+
+        response = self.client.post(reverse('ads'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+    def test_query(self):
+        data = {
+            "query": "тел"
+        }
+
+        response = self.client.post(reverse('ads'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+    def test_fake_query(self):
+        data = {
+            "query": "еда"
+        }
+
+        response = self.client.post(reverse('ads'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 0)
+
+    def test_by_category(self):
+        data = {
+            "category": "Техника"
+        }
+
+        response = self.client.post(reverse('ads'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+    def test_by_incorrect_category(self):
+        data = {
+            "category": "fakecategory"
+        }
+
+        response = self.client.post(reverse('ads'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_by_condition(self):
+        data = {
+            "condition": "Б/у"
+        }
+
+        response = self.client.post(reverse('ads'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+    def test_by_incorrect_condition(self):
+        data = {
+            "condition": "fakecondition"
+        }
+
+        response = self.client.post(reverse('ads'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

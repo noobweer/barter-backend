@@ -20,11 +20,14 @@ class ExchangeService:
             if not all([ad_sender_id, ad_receiver_id]):
                 return {'is_created': False, 'message': 'Send all required fields (ad_sender_id, ad_receiver_id)'}
 
+            if ad_sender_id == ad_receiver_id:
+                return {'is_created': False, 'message': 'You cant exchange with yourself'}
+
             if not self.Ad.filter(id=ad_sender_id).exists():
-                return {'is_create': False, 'message': f'Invalid ad_sender_id ({ad_sender_id})'}
+                return {'is_created': False, 'message': f'Invalid ad_sender_id ({ad_sender_id})'}
 
             if not self.Ad.filter(id=ad_receiver_id).exists():
-                return {'is_create': False, 'message': f'Invalid ad_receiver_id ({ad_receiver_id})'}
+                return {'is_created': False, 'message': f'Invalid ad_receiver_id ({ad_receiver_id})'}
 
             ad_sender_obj = self.Ad.get(id=ad_sender_id)
             ad_receiver_obj = self.Ad.get(id=ad_receiver_id)
