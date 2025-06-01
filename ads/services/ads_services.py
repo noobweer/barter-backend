@@ -1,3 +1,5 @@
+from django.db.models import Q
+from rest_framework import status
 from ..models import *
 
 
@@ -95,6 +97,36 @@ class AdsService:
 
             ad_obj.save()
             return {'is_edited': True,
-                    'message': 'Ad edited successfully ({username}, {title}, {category_name}, {condition_name})'}
+                    'message': f'Ad edited successfully ({username}, {title}, {category_name}, {condition_name})'}
         except Exception as e:
             return {'is_edited': False, 'message': str(e)}
+
+    def all_ads(self, data):
+        try:
+            query = data.get('query')
+            category_name = data.get('category')
+            condition_name = data.get('condition')
+
+            result = self.Ad.all()
+
+            if query:
+                q_object = Q(title__icontains=query) | Q(description__icontains=query)
+                result = result.filter(q_object)
+
+            if category_name:
+                if not self.Category.filter(name=category_name).exists():
+                    return status.HTTP_400_BAD_REQUEST
+                category_obj = self.Category.get(name=category_name)
+                result = result.filter(category=category_obj)
+
+            if condition_name:
+                if not self.Condition.filter(name=condition_name).exists():
+                    return status.HTTP_400_BAD_REQUEST
+                condition_obj = self.Condition.get(name=condition_name)
+                result = result.filter(condition=condition_obj)
+
+            return result
+
+        except Exception as e:
+            print(e)
+            return status.HTTP_400_BAD_REQUEST

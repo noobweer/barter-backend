@@ -10,5 +10,6 @@ urlpatterns = [
     path('refresh/', TokenRefreshView.as_view(), name='refresh'),
     path('create/', CreateAdView.as_view(), name='create-ad'),
     path('delete/', DeleteAdView.as_view(), name='delete-ad'),
-    path('edit/', EditAdView.as_view(), name='edit-ad')
+    path('edit/', EditAdView.as_view(), name='edit-ad'),
+    path('ads/', AdsView.as_view(), name='ads')
 ]

@@ -37,9 +37,19 @@ class Ad(models.Model):
 
 
 class ExchangeProposal(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Ожидает'),
+        ('accepted', 'Принято'),
+        ('declined', 'Отклонено'),
+    )
+
     ad_sender = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='sent_proposals')
     ad_receiver = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='receiver_proposals')
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
     comment = models.CharField(max_length=350)
 
     def __str__(self):

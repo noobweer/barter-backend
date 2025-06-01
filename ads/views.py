@@ -1,9 +1,11 @@
 from rest_framework.decorators import permission_classes
+from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 from .services.ads_services import *
+from .serializers import AdSerializer
 
 
 # Create your views here.
@@ -21,7 +23,7 @@ class CreateAdView(APIView):
 class DeleteAdView(APIView):
     def post(self, request):
         username = request.user.username
-        data = request.body
+        data = request.data
 
         delete_result = AdsService().delete_ad(username, data)
         return Response(delete_result)
@@ -31,7 +33,31 @@ class DeleteAdView(APIView):
 class EditAdView(APIView):
     def post(self, request):
         username = request.user.username
-        data = request.body
+        data = request.data
 
         edit_result = AdsService().edit_ad(username, data)
         return Response(edit_result)
+
+
+class AdsCursorPagination(CursorPagination):
+    page_size = 10
+    ordering = 'created_at'
+    cursor_query_param = 'cursor'
+
+
+@permission_classes([IsAuthenticated])
+class AdsView(APIView):
+    pagination_class = AdsCursorPagination
+
+    def post(self, request):
+        data = request.data
+        ads_result = AdsService().all_ads(data)
+
+        if isinstance(ads_result, int):
+            return Response({'error': 'Invalid filters'}, status=ads_result)
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(ads_result, request, view=self)
+        serialized_data = AdSerializer(result_page, many=True).data
+
+        return paginator.get_paginated_response(serialized_data)
