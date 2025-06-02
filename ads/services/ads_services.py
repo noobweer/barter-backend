@@ -104,8 +104,8 @@ class AdsService:
     def all_ads(self, data):
         try:
             query = data.get('query')
-            category_name = data.get('category')
-            condition_name = data.get('condition')
+            category_names = data.get('category', [])
+            condition_names = data.get('condition', [])
 
             result = self.Ad.all()
 
@@ -113,17 +113,23 @@ class AdsService:
                 q_object = Q(title__icontains=query) | Q(description__icontains=query)
                 result = result.filter(q_object)
 
-            if category_name:
-                if not self.Category.filter(name=category_name).exists():
-                    return status.HTTP_400_BAD_REQUEST
-                category_obj = self.Category.get(name=category_name)
-                result = result.filter(category=category_obj)
+            if category_names:
+                valid_categories = []
+                for name in category_names:
+                    if not self.Category.filter(name=name).exists():
+                        return status.HTTP_400_BAD_REQUEST
+                    valid_categories.append(self.Category.get(name=name))
 
-            if condition_name:
-                if not self.Condition.filter(name=condition_name).exists():
-                    return status.HTTP_400_BAD_REQUEST
-                condition_obj = self.Condition.get(name=condition_name)
-                result = result.filter(condition=condition_obj)
+                result = result.filter(category__in=valid_categories)
+
+            if condition_names:
+                valid_conditions = []
+                for name in condition_names:
+                    if not self.Condition.filter(name=name).exists():
+                        return status.HTTP_400_BAD_REQUEST
+                    valid_conditions.append(self.Condition.get(name=name))
+
+                result = result.filter(condition__in=valid_conditions)
 
             return result
 

@@ -240,7 +240,7 @@ class AdsViewTest(APITestCase):
 
     def test_by_category(self):
         data = {
-            "category": "Техника"
+            "category": ["Техника"]
         }
 
         response = self.client.post(reverse('ads'), data, format='json')
@@ -249,7 +249,7 @@ class AdsViewTest(APITestCase):
 
     def test_by_incorrect_category(self):
         data = {
-            "category": "fakecategory"
+            "category": ["fakecategory"]
         }
 
         response = self.client.post(reverse('ads'), data, format='json')
@@ -257,7 +257,7 @@ class AdsViewTest(APITestCase):
 
     def test_by_condition(self):
         data = {
-            "condition": "Б/у"
+            "condition": ["Б/у"]
         }
 
         response = self.client.post(reverse('ads'), data, format='json')
@@ -266,7 +266,7 @@ class AdsViewTest(APITestCase):
 
     def test_by_incorrect_condition(self):
         data = {
-            "condition": "fakecondition"
+            "condition": ["fakecondition"]
         }
 
         response = self.client.post(reverse('ads'), data, format='json')
