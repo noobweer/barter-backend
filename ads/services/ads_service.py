@@ -68,9 +68,9 @@ class AdsService:
             category_name = data.get('category')
             condition_name = data.get('condition')
 
-            if not ad_id:
+            if not all([ad_id, title, description, category_name, condition_name]):
                 return {'is_edited': False,
-                        'message': 'Send all required fields (username, ad_id)'}
+                        'message': 'Send all required fields (username, ad_id, title, description, category_name, condition_name)'}
 
             if not self.User.filter(username=username).exists():
                 return {'is_edited': False, 'message': f'Invalid username (now: {username})'}

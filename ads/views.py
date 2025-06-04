@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from .services.ads_services import *
-from .serializers import AdSerializer, ExchangeSerializer
+from .services.ads_service import *
+from .serializers import AdSerializer, ExchangeSerializer, CategorySerializer, ConditionSerializer
 from .services.exchange_service import *
+from .services.helper_service import *
 
 
 # Create your views here.
@@ -51,6 +52,7 @@ class AdsView(APIView):
     pagination_class = AdsCursorPagination
 
     def post(self, request):
+        username = request.user.username
         data = request.data
         ads_result = AdsService().all_ads(data)
 
@@ -95,4 +97,27 @@ class ExchangesView(APIView):
 
         serialized_data = ExchangeSerializer(exchanges_result, many=True).data
 
+        return Response(serialized_data)
+
+
+@permission_classes([IsAuthenticated])
+class UserInfoView(APIView):
+    def get(self, request):
+        username = request.user.username
+        return Response({"account": username})
+
+
+@permission_classes([IsAuthenticated])
+class CategoriesView(APIView):
+    def get(self, request):
+        categories = HelperService().get_categories()
+        serialized_data = CategorySerializer(categories, many=True).data
+        return Response(serialized_data)
+
+
+@permission_classes([IsAuthenticated])
+class ConditionsView(APIView):
+    def get(self, request):
+        conditions = HelperService().get_conditions()
+        serialized_data = CategorySerializer(conditions, many=True).data
         return Response(serialized_data)

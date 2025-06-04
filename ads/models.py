@@ -19,7 +19,7 @@ class Condition(models.Model):
 
 class Ad(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=350)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)

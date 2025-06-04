@@ -52,6 +52,9 @@ class ExchangeService:
                 return {'is_edited': False,
                         'message': f'Exchange with ID "{exchange_id}" does not exist or does not belong to you'}
 
+            if exchange_status not in ['pending', 'accepted', 'declined', 'Ожидает', 'Принято', 'Отклонено']:
+                return {'is_edited': False, 'message': f'Invalid exchanges status ({exchange_id}, {exchange_status})'}
+
             exchange_obj = self.ExchangeProposal.get(id=exchange_id)
             exchange_obj.status = exchange_status
             exchange_obj.save()
@@ -64,7 +67,7 @@ class ExchangeService:
         try:
             sender_username = data.get('sender_username')
             receiver_username = data.get('receiver_username')
-            exchange_status = data.get('status')
+            exchange_status = data.get('status', [])
 
             result = self.ExchangeProposal.all()
 
@@ -79,7 +82,7 @@ class ExchangeService:
                 result = result.filter(ad_receiver__user__username=receiver_username)
 
             if exchange_status:
-                result = result.filter(status=exchange_status)
+                result = result.filter(status__in=exchange_status)
 
             return result
         except Exception as e:

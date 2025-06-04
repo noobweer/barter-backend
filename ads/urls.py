@@ -8,6 +8,9 @@ from .views import *
 urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='login'),
     path('refresh/', TokenRefreshView.as_view(), name='refresh'),
+    path('user-info/', UserInfoView.as_view(), name='user-info'),
+    path('categories/', CategoriesView.as_view(), name='categories'),
+    path('conditions/', ConditionsView.as_view(), name='conditions'),
     path('create-ad/', CreateAdView.as_view(), name='create-ad'),
     path('delete-ad/', DeleteAdView.as_view(), name='delete-ad'),
     path('edit-ad/', EditAdView.as_view(), name='edit-ad'),

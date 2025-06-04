@@ -35,7 +35,7 @@ class AdSerializer(serializers.ModelSerializer):
             'category',
             'condition',
             'category_name',
-            'condition_name'
+            'condition_name',
         ]
 
     def validate(self, data):
