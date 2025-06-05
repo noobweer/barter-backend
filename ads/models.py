@@ -36,7 +36,7 @@ class ExchangeProposal(models.Model):
         ('declined', 'Отклонено'),
     )
 
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     ad_sender = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='sent_proposals')
     ad_receiver = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='receiver_proposals')
     status = models.CharField(
