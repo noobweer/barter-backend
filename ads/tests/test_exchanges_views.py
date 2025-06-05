@@ -16,7 +16,6 @@ class CreateExchangeViewTest(APITestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-        self.client.force_authenticate(user=self.user)
         self.category_obj = Category.objects.create(name="Техника")
         self.condition_obj = Condition.objects.create(name="Б/у")
         self.test_ad_obj1 = Ad.objects.create(user=self.user, title="Телефон", description="Хороший телефон",
@@ -135,7 +134,7 @@ class EditExchangeViewText(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['is_edited'], False)
 
-    def test_incorrect_user(self):
+    def test_incorrect_user_without_permission(self):
         data = {
             "exchange_id": self.test_exchange_obj.id,
             "status": "accepted"
@@ -208,7 +207,7 @@ class ExchangesViewTest(APITestCase):
 
     def test_by_status_accepted(self):
         data = {
-            "status": "accepted"
+            "status": ["accepted"]
         }
 
         response = self.client.post(reverse('exchanges'), data, format='json')
@@ -217,7 +216,7 @@ class ExchangesViewTest(APITestCase):
 
     def test_by_status_pending(self):
         data = {
-            "status": "pending"
+            "status": ["pending"]
         }
 
         response = self.client.post(reverse('exchanges'), data, format='json')
@@ -235,7 +234,7 @@ class ExchangesViewTest(APITestCase):
 
     def test_by_incorrect_status(self):
         data = {
-            "status": "fakestatus"
+            "status": ["fakestatus"]
         }
 
         response = self.client.post(reverse('exchanges'), data, format='json')

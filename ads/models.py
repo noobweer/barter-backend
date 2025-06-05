@@ -47,4 +47,4 @@ class ExchangeProposal(models.Model):
     comment = models.CharField(max_length=350, null=True)
 
     def __str__(self):
-        return f"[ID: {self.id}] STASTUS: {self.status} AD_SENDER: {self.ad_sender.id} AD_RECEIVER: {self.ad_receiver.id}"
+        return f"[ID: {self.id}] STATUS: {self.status} AD_SENDER: {self.ad_sender.id} AD_RECEIVER: {self.ad_receiver.id}"

@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .services.ads_service import *
 from .serializers import AdSerializer, ExchangeSerializer, CategorySerializer, ConditionSerializer
-from .services.exchange_service import *
+from .services.exchanges_service import *
 from .services.helper_service import *
 
 
@@ -100,6 +100,7 @@ class ExchangesView(APIView):
         return Response(serialized_data)
 
 
+# Planned to expand the data provided about the user
 @permission_classes([IsAuthenticated])
 class UserInfoView(APIView):
     def get(self, request):
