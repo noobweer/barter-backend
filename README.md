@@ -36,3 +36,6 @@ python manage.py runserver
 python manage.py test ads.tests
 ```
 
+![Фото интерфейса фронтенда](https://i.yapx.ru/ZS3uH.png)
+![Документация](https://i.yapx.ru/ZS3we.png)
+![Админ-панель Django](https://i.yapx.ru/ZS3wy.png)
